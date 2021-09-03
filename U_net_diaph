@@ -57,19 +57,19 @@ class U_Net(torch.nn.Module):
         #self.up_conv2 = torch.nn.ConvTranspose2d(8*C, 4*C, kernel_size = 2, stride = 2)
         #self.conv10 = ConvUnet(8*C, 4*C)
 
-        self.up_conv3 = torch.nn.ConvTranspose2d(32*C, 16*C, kernel_size = (2, 2), stride = 2)
+        self.up_conv3 = torch.nn.ConvTranspose2d(32*C, 16*C, kernel_size = 2, stride = 2)
         self.conv11 = ConvUnet(32*C, 16*C)
 
-        self.up_conv4 = torch.nn.ConvTranspose2d(16*C, 8*C, kernel_size = (2, 2), stride = 2)
+        self.up_conv4 = torch.nn.ConvTranspose2d(16*C, 8*C, kernel_size = 2, stride = 2)
         self.conv12 = ConvUnet(16*C, 8*C)
 
-        self.up_conv5 = torch.nn.ConvTranspose2d(8*C, 4*C, kernel_size = (2, 2), stride = 2)
+        self.up_conv5 = torch.nn.ConvTranspose2d(8*C, 4*C, kernel_size = 2, stride = 2)
         self.conv13 = ConvUnet(8*C, 4*C)
 
-        self.up_conv6 = torch.nn.ConvTranspose2d(4*C, 2*C, kernel_size = (2, 2), stride = 2)
+        self.up_conv6 = torch.nn.ConvTranspose2d(4*C, 2*C, kernel_size = 2, stride = 2)
         self.conv14 = ConvUnet(4*C, 2*C)
 
-        self.up_conv7 = torch.nn.ConvTranspose2d(2*C, C, kernel_size = (2, 2), stride = 2)
+        self.up_conv7 = torch.nn.ConvTranspose2d(2*C, C, kernel_size = 2, stride = 2)
         self.conv15 = ConvUnet(2*C, C)
 
         self.conv16 = torch.nn.Conv2d(C, 1, kernel_size = 1)  
@@ -78,6 +78,7 @@ class U_Net(torch.nn.Module):
         batch_size, Ch, N, M = x.size()
         C = 16
         
+        # Permet de traiter des entrées de tailles quelconques
         k1, k2 = [], []
         kernel = 2*np.ones((5, 2), dtype=int)
         for i in range(5):
@@ -94,6 +95,7 @@ class U_Net(torch.nn.Module):
           else:
             kernel[i,:] = np.array([3, 3])
         
+        # Augmente le kernel si l'image est jugée grande 
         if N > 400 or M > 400:
           self.conv1 = ConvUnet(1, C, ker = 5, pad = 2)
           self.conv2 = ConvUnet(C, 2*C, ker = 5, pad = 2)
@@ -135,32 +137,32 @@ class U_Net(torch.nn.Module):
         #x13 = torch.cat((y2, x12), dim = 1)
         #x14 = self.conv10(x13)
         
-        self.up_conv3 = torch.nn.ConvTranspose2d(32*C, 16*C, kernel_size = kernel[-1,:], stride = 2)
+        self.up_conv3 = torch.nn.ConvTranspose2d(32*C, 16*C, kernel_size = kernel[-1,:], stride = 2).to(device)
         x15 = self.up_conv3(x6) # 14x18 23x18
         y3 = crop_image(x5, x15)
         x16 = torch.cat((y3, x15), dim = 1)
         x17 = self.conv11(x16)
 
 
-        self.up_conv4 = torch.nn.ConvTranspose2d(16*C, 8*C, kernel_size = kernel[-2,:], stride = 2)
+        self.up_conv4 = torch.nn.ConvTranspose2d(16*C, 8*C, kernel_size = kernel[-2,:], stride = 2).to(device)
         x18 = self.up_conv4(x17) # 28x37 47x37
         y4 = crop_image(x4, x18)
         x19 = torch.cat((y4, x18), dim = 1)
         x20 = self.conv12(x19)
 
-        self.up_conv5 = torch.nn.ConvTranspose2d(8*C, 4*C, kernel_size = kernel[-3,:], stride = 2)
+        self.up_conv5 = torch.nn.ConvTranspose2d(8*C, 4*C, kernel_size = kernel[-3,:], stride = 2).to(device)
         x21 = self.up_conv5(x20) # 57x75 95x75
         y5 = crop_image(x3, x21)
         x22 = torch.cat((y5, x21), dim = 1)
         x23 = self.conv13(x22)
 
-        self.up_conv6 = torch.nn.ConvTranspose2d(4*C, 2*C, kernel_size = kernel[-4,:], stride = 2)
+        self.up_conv6 = torch.nn.ConvTranspose2d(4*C, 2*C, kernel_size = kernel[-4,:], stride = 2).to(device)
         x24 = self.up_conv6(x23) # 114x150 190x150
         y6 = crop_image(x2, x24)
         x25 = torch.cat((y6, x24), dim = 1)
         x26 = self.conv14(x25)
 
-        self.up_conv7 = torch.nn.ConvTranspose2d(2*C, C, kernel_size = kernel[-5,:], stride = 2)
+        self.up_conv7 = torch.nn.ConvTranspose2d(2*C, C, kernel_size = kernel[-5,:], stride = 2).to(device)
         x27 = self.up_conv7(x26) # 228x330 380x300
         y7 = crop_image(x1, x27)
         x28 = torch.cat((y7, x27), dim = 1)
