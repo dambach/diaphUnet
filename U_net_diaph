@@ -1,4 +1,5 @@
-!def ConvUnet(K_in, K_out, ker = 3, pad = 1):
+````
+def ConvUnet(K_in, K_out, ker = 3, pad = 1):
   conv = torch.nn.Sequential(
       torch.nn.Conv2d(K_in, K_out, kernel_size = ker, stride = 1, 
                       padding = pad, bias = False),
@@ -176,3 +177,4 @@ class U_Net(torch.nn.Module):
 model = U_Net().to(device)
 criterion = torch.nn.BCEWithLogitsLoss()
 optimizer = torch.optim.Adam(model.parameters(), lr = 1e-4)
+
