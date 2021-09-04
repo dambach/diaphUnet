@@ -31,7 +31,7 @@ class U_Net(torch.nn.Module):
         super(U_Net, self).__init__()
 
         self.pool = torch.nn.MaxPool2d(2, 2)
-        C = 16
+        C = 64
 
         #Encoder
         self.conv1 = ConvUnet(1, C)
@@ -46,9 +46,9 @@ class U_Net(torch.nn.Module):
 
         self.conv6 = ConvUnet(16*C, 32*C)
 
-        #self.conv7 = ConvUnet(4*C, 8*C)
+        #self.conv7 = ConvUnet(32*C, 64*C)
 
-        #self.conv8 = ConvUnet(8*C, 8*C)
+        #self.conv8 = ConvUnet(64*C, 128*C)
 
         #Decoder
         #self.up_conv1 = torch.nn.ConvTranspose2d(8*C, 8*C, kernel_size = 2, stride = 2)
@@ -76,7 +76,7 @@ class U_Net(torch.nn.Module):
 
     def forward(self, x):
         batch_size, Ch, N, M = x.size()
-        C = 16
+        C = 64
         
         # Permet de traiter des entrées de tailles quelconques
         k1, k2 = [], []
@@ -97,10 +97,10 @@ class U_Net(torch.nn.Module):
         
         # Augmente le kernel si l'image est jugée grande 
         if N > 400 or M > 400:
-          self.conv1 = ConvUnet(1, C, ker = 5, pad = 2)
-          self.conv2 = ConvUnet(C, 2*C, ker = 5, pad = 2)
-          self.conv14 = ConvUnet(4*C, 2*C, ker = 5, pad = 2)
-          self.conv15 = ConvUnet(2*C, C, ker = 5, pad = 2)
+          self.conv1 = ConvUnet(1, C, ker = 5, pad = 2).to(device)
+          self.conv2 = ConvUnet(C, 2*C, ker = 5, pad = 2).to(device)
+          self.conv14 = ConvUnet(4*C, 2*C, ker = 5, pad = 2).to(device)
+          self.conv15 = ConvUnet(2*C, C, ker = 5, pad = 2).to(device)
 
         # Encoder
         x1 = self.conv1(x) # 2 CROP
@@ -127,11 +127,13 @@ class U_Net(torch.nn.Module):
         #x8 = self.conv8(pool7) # 16 CROP
 
         # Decoder
+        #self.up_conv1 = torch.nn.ConvTranspose2d(128*C, 64*C, kernel_size = kernel[-1,:], stride = 2).to(device)
         #x9 = self.up_conv1(x8) # 3x3
         #y1 = crop_image(x7, x9)
         #x10 = torch.cat((y1, x9), dim = 1)
         #x11 = self.conv9(x10)
-
+        
+        #self.up_conv2 = torch.nn.ConvTranspose2d(64*C, 32*C, kernel_size = kernel[-2,:], stride = 2).to(device)
         #x12 = self.up_conv2(x11) # 7x6
         #y2 = crop_image(x6, x12)
         #x13 = torch.cat((y2, x12), dim = 1)
