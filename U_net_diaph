@@ -1,6 +1,4 @@
-```javascript
-Counter.propTypes = {
-```
+```python
 def ConvUnet(K_in, K_out, ker = 3, pad = 1):
   conv = torch.nn.Sequential(
       torch.nn.Conv2d(K_in, K_out, kernel_size = ker, stride = 1, 
