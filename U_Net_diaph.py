@@ -11,6 +11,8 @@ import numpy as np                        # pour effectuer des opérations sur l
 import torch                              # pour construire le modèle de réseaux de neurones
 from torch.optim import Adam              # pour optimiser la fonction perte
 
+device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
+
 def ConvUnet(K_in, K_out, ker = 3, pad = 1):
   conv = torch.nn.Sequential(
       torch.nn.Conv2d(K_in, K_out, kernel_size = ker, stride = 1, 
@@ -109,11 +111,11 @@ class U_Net(torch.nn.Module):
             kernel[i,:] = np.array([3, 3])
         
         # Augmente le kernel si l'image est jugée grande 
-        if N > 400 or M > 400:
-          self.conv1 = ConvUnet(1, C, ker = 5, pad = 2)
-          self.conv2 = ConvUnet(C, 2*C, ker = 5, pad = 2)
-          self.conv14 = ConvUnet(4*C, 2*C, ker = 5, pad = 2)
-          self.conv15 = ConvUnet(2*C, C, ker = 5, pad = 2)
+        if N > 256 or M > 256:
+          self.conv1 = ConvUnet(1, C, ker = 5, pad = 2).to(device)
+          self.conv2 = ConvUnet(C, 2*C, ker = 5, pad = 2).to(device)
+          self.conv14 = ConvUnet(4*C, 2*C, ker = 5, pad = 2).to(device)
+          self.conv15 = ConvUnet(2*C, C, ker = 5, pad = 2).to(device)
 
         # Encoder
         x1 = self.conv1(x) # 2 CROP
@@ -186,4 +188,4 @@ class U_Net(torch.nn.Module):
 
 model = U_Net().to(device)
 criterion = torch.nn.BCEWithLogitsLoss()
-optimizer = torch.optim.Adam(model.parameters(), lr = 1e-4)
+optimizer = torch.optim.Adam(model.parameters(), lr = 1e-4,  weight_decay = 1e-2)
