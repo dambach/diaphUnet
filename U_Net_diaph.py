@@ -111,7 +111,7 @@ class U_Net(torch.nn.Module):
             kernel[i,:] = np.array([3, 3])
         
         # Augmente le kernel si l'image est jugée grande 
-        if N > 256 or M > 256:
+        if N > 512 or M > 512:
           self.conv1 = ConvUnet(1, C, ker = 5, pad = 2).to(device)
           self.conv2 = ConvUnet(C, 2*C, ker = 5, pad = 2).to(device)
           self.conv14 = ConvUnet(4*C, 2*C, ker = 5, pad = 2).to(device)
