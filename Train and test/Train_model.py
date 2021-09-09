@@ -36,10 +36,10 @@ def train_model(model, xtrain, ytrain, xtest, ytest, num_epoch, batch, loss_fn, 
     test_loss = 0.0
     
     for u, v, mu, mv in zip(xtrain, xtest, ytrain, ytest):
-      train_loader = torch.utils.data.DataLoader(dataset = u, batch_size = batch, shuffle = False, drop_last=True)
-      test_loader = torch.utils.data.DataLoader(dataset = v, batch_size = int(batch/2), shuffle = False, drop_last=True)
-      mtrain_loader = torch.utils.data.DataLoader(dataset = mu, batch_size = batch, shuffle = False, drop_last=True)
-      mtest_loader = torch.utils.data.DataLoader(dataset = mv, batch_size = int(batch/2), shuffle = False, drop_last=True)
+      train_loader = torch.utils.data.DataLoader(dataset = u, batch_size = batch, shuffle = False, drop_last=False)
+      test_loader = torch.utils.data.DataLoader(dataset = v, batch_size = int(batch/2), shuffle = False, drop_last=False)
+      mtrain_loader = torch.utils.data.DataLoader(dataset = mu, batch_size = batch, shuffle = False, drop_last=False)
+      mtest_loader = torch.utils.data.DataLoader(dataset = mv, batch_size = int(batch/2), shuffle = False, drop_last=False)
     
       num_correct = 0
       num_pixels = 0
@@ -101,7 +101,7 @@ def train_model(model, xtrain, ytrain, xtest, ytest, num_epoch, batch, loss_fn, 
     test_losses.append(test_loss)
     t2 = time.time()  
     if epoch % save_epoch == 0:
-      path = '/content/drive/MyDrive/Colab Notebooks/Data/model_u_net' + str(epoch) + '.pth'
+      path = '/content/drive/MyDrive/Colab Notebooks/Data/Weights/model_Unet_' + str(epoch) + '.pth'
       torch.save(model, path)
       print('Epoch : {} Train Loss : {:.4f} Test Loss : {:.4f} Accuracy train : {:.4f} Accuracy test : {:.4f} Dice train : {:.4f} Dice test : {:.4f} Temps : {:.4f} min'.format(epoch, train_loss, test_loss, acc1, acc2, dice1, dice2, (t2-t1)/60))
       fig, ax = plt.subplots(nrows=2, ncols=2, figsize=(20, 15),
