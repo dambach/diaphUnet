@@ -7,7 +7,7 @@ Original file is located at
     https://colab.research.google.com/drive/1ovdsegp0wyOGGBrkuRTqe8JDs0w3o4Rq
 """
 
-import h5py
+import h5py                               # pour load les fichiers .mat
 import os                                 # pour manipuler et aller chercher les fichiers en local
 import numpy as np                        # pour effectuer des opérations sur les array/tableaux
 import scipy.io as sio                    # pour transformer les dictionnaires .mat en type numpy.ndarray
